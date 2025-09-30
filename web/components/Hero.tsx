@@ -51,7 +51,7 @@ export default function Hero({ location, onLocationChange, onFindWindows, loadin
           onLoadedData={() => console.log('Video data loaded')}
           onSuspend={() => console.log('Video loading suspended')}
         >
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dyipahmz9/video/upload/v1759257424/ocean-video_jsrrnp.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         {/* Fallback background - only shows if video fails */}
