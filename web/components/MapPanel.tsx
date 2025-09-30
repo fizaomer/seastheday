@@ -116,9 +116,9 @@ export default function MapPanel({ location, onLocationChange, userLocation }: M
       if (!mapContainer) return
       
       // If container already has a map, remove it first
-      if (mapContainer._leaflet_id) {
+      if ((mapContainer as any)._leaflet_id) {
         try {
-          mapContainer._leaflet_id = null
+          (mapContainer as any)._leaflet_id = null
         } catch (e) {
           console.warn('Error clearing map container:', e)
         }
