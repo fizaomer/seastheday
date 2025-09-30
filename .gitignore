@@ -50,8 +50,8 @@ coverage/
 # Docker
 .dockerignore
 
-# Large files
-*.mp4
-*.mov
-*.avi
+# Large files (handled by Git LFS)
+# *.mp4
+# *.mov
+# *.avi
 
