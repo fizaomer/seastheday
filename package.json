@@ -1,0 +1,16 @@
+{
+  "name": "seas-the-day",
+  "version": "1.0.0",
+  "description": "Find your perfect beach window",
+  "private": true,
+  "scripts": {
+    "dev": "docker-compose up",
+    "dev:local": "./run-local.sh",
+    "build": "cd web && npm run build",
+    "vercel-build": "cd web && npm install && npm run build",
+    "test": "cd web && npm test && cd ../api && python -m pytest",
+    "lint": "cd web && npm run lint"
+  },
+  "license": "MIT"
+}
+

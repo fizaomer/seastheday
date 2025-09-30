@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mansalva&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+@layer base {
+  html {
+    font-family: 'Poppins', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-bg text-text;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary-hover transition-colors duration-200 hover:-translate-y-[1px];
+  }
+  
+  .btn-secondary {
+    @apply bg-card border border-line text-text px-6 py-3 rounded-full font-medium hover:bg-line transition-colors duration-200 hover:-translate-y-[1px];
+  }
+  
+  .card {
+    @apply bg-card border border-line rounded-2xl p-6 shadow-coastal;
+  }
+  
+  .chip {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-line text-subtext;
+  }
+  
+  .score-display {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .title-font {
+    font-family: 'Mansalva', cursive;
+  }
+}
