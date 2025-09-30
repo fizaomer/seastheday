@@ -53,7 +53,12 @@ class RecommendationsResponse(BaseModel):
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok"}
+    print("Health check requested")
+    return {"status": "ok", "message": "API is running"}
+
+@app.get("/")
+async def root():
+    return {"message": "Seas the Day API", "status": "running"}
 
 @app.post("/recommendations", response_model=RecommendationsResponse)
 async def get_recommendations(request: RecommendationRequest):
