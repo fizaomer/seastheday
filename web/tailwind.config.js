@@ -20,7 +20,7 @@ module.exports = {
         text: '#0B1220',
         subtext: '#475569',
         line: '#E2E8F0',
-        bg: '#F8FAFC',
+        bg: '#78aabb',
         card: '#FFFFFF',
         warn: '#F59E0B',
         bad: '#EF4444',

@@ -21,6 +21,8 @@ export interface WeatherSummary {
   uv: number
   windMph: number
   cloudPct: number
+  waterTempF?: number
+  waveHeightFt?: number
 }
 
 export interface BeachWindow {

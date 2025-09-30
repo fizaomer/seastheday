@@ -39,6 +39,8 @@ class WeatherSummary(BaseModel):
     uv: float
     windMph: float
     cloudPct: float
+    waterTempF: Optional[float] = None
+    waveHeightFt: Optional[float] = None
 
 class BeachWindow(BaseModel):
     score: float
@@ -93,7 +95,9 @@ async def get_recommendations(request: RecommendationRequest):
                     tempF=window['summary']['tempF'],
                     uv=window['summary']['uv'],
                     windMph=window['summary']['windMph'],
-                    cloudPct=window['summary']['cloudPct']
+                    cloudPct=window['summary']['cloudPct'],
+                    waterTempF=window['summary'].get('waterTempF'),
+                    waveHeightFt=window['summary'].get('waveHeightFt')
                 ),
                 reasons=window['reasons']
             ))

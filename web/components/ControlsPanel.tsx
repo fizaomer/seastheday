@@ -16,18 +16,18 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
   }
 
   return (
-    <div className="card mb-8">
-      <h2 className="text-xl font-semibold text-text mb-6">Preferences</h2>
+    <div className="card mb-4">
+      <h2 className="text-xl font-semibold text-text mb-4">preferences</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Mode Selection */}
         <div>
-          <label className="block text-sm font-medium text-text mb-3">Activity Mode</label>
+          <label className="block text-sm font-medium text-text mb-3">activity mode</label>
           <div className="flex gap-2">
             {[
-              { value: 'lounge', label: 'Lounge', desc: 'Relaxing on the beach' },
-              { value: 'swim', label: 'Swim', desc: 'Swimming and water activities' },
-              { value: 'surf', label: 'Surf', desc: 'Catching waves' },
+              { value: 'lounge', label: 'lounge', desc: 'relaxing on the beach' },
+              { value: 'swim', label: 'swim', desc: 'swimming and water activities' },
+              { value: 'surf', label: 'surf', desc: 'catching waves' },
             ].map((mode) => (
               <button
                 key={mode.value}
@@ -46,10 +46,10 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
 
         {/* Date Range */}
         <div>
-          <label className="block text-sm font-medium text-text mb-3">Date Range</label>
+          <label className="block text-sm font-medium text-text mb-3">date range</label>
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs text-subtext mb-1">Start</label>
+              <label className="block text-xs text-subtext mb-1">start</label>
               <input
                 type="date"
                 value={preferences.startDate}
@@ -58,7 +58,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
               />
             </div>
             <div>
-              <label className="block text-xs text-subtext mb-1">End</label>
+              <label className="block text-xs text-subtext mb-1">end</label>
               <input
                 type="date"
                 value={preferences.endDate}
@@ -72,7 +72,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
         {/* Temperature */}
         <div>
           <label className="block text-sm font-medium text-text mb-3">
-            Preferred Temperature: {preferences.prefTempF}°F
+            preferred temperature: {preferences.prefTempF}°f
           </label>
           <input
             type="range"
@@ -83,15 +83,15 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
             className="w-full"
           />
           <div className="flex justify-between text-xs text-subtext mt-1">
-            <span>60°F</span>
-            <span>85°F</span>
+            <span>60°f</span>
+            <span>85°f</span>
           </div>
         </div>
 
         {/* Wind */}
         <div>
           <label className="block text-sm font-medium text-text mb-3">
-            Max Wind Speed: {preferences.maxWindMph} mph
+            max wind speed: {preferences.maxWindMph} mph
           </label>
           <input
             type="range"
@@ -110,7 +110,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
         {/* UV Index */}
         <div>
           <label className="block text-sm font-medium text-text mb-3">
-            UV Index Cap: {preferences.uvGood}
+            uv index cap: {preferences.uvGood}
           </label>
           <input
             type="range"
@@ -129,7 +129,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
         {/* Window Hours */}
         <div>
           <label className="block text-sm font-medium text-text mb-3">
-            Window Duration: {preferences.windowHours} hours
+            window duration: {preferences.windowHours} hours
           </label>
           <input
             type="range"
@@ -150,7 +150,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
         {(preferences.mode === 'swim' || preferences.mode === 'surf') && (
           <div>
             <label className="block text-sm font-medium text-text mb-3">
-              Min Water Temperature: {preferences.waterTempF || 65}°F
+              min water temperature: {preferences.waterTempF || 65}°f
             </label>
             <input
               type="range"
@@ -161,8 +161,8 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
               className="w-full"
             />
             <div className="flex justify-between text-xs text-subtext mt-1">
-              <span>55°F</span>
-              <span>80°F</span>
+              <span>55°f</span>
+              <span>80°f</span>
             </div>
           </div>
         )}
@@ -171,7 +171,7 @@ export default function ControlsPanel({ preferences, onPreferencesChange }: Cont
         {preferences.mode === 'surf' && (
           <div>
             <label className="block text-sm font-medium text-text mb-3">
-              Min Wave Height: {preferences.waveHeightFt || 2} ft
+              min wave height: {preferences.waveHeightFt || 2} ft
             </label>
             <input
               type="range"

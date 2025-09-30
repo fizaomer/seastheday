@@ -2,15 +2,57 @@
 
 import { MapPin, Search } from 'lucide-react'
 import { Location } from '@/types'
+import { useState } from 'react'
 
 interface HeroProps {
   location: Location | null
   onLocationChange: (location: Location | null) => void
   onFindWindows: () => void
   loading: boolean
+  onScrollToData?: () => void
 }
 
-export default function Hero({ location, onLocationChange, onFindWindows, loading }: HeroProps) {
+export default function Hero({ location, onLocationChange, onFindWindows, loading, onScrollToData }: HeroProps) {
+  const [searchQuery, setSearchQuery] = useState('')
+  const [showSearch, setShowSearch] = useState(false)
+
+  const searchBeach = async (query: string) => {
+    if (!query.trim()) return
+
+    try {
+      // For now, we'll use a simple geocoding approach
+      // Later we can add a proper beach search API
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ' beach')}&limit=1`)
+      const data = await response.json()
+      
+      if (data && data.length > 0) {
+        const result = data[0]
+        onLocationChange({
+          lat: parseFloat(result.lat),
+          lon: parseFloat(result.lon),
+          name: result.display_name
+        })
+        setSearchQuery('')
+        setShowSearch(false)
+      } else {
+        alert('Beach not found. Try a different search term.')
+      }
+    } catch (error) {
+      console.error('Error searching for beach:', error)
+      alert('Error searching for beach. Please try again.')
+    }
+  }
+
+  const handleFindWindows = () => {
+    onFindWindows()
+    if (onScrollToData) {
+      // Small delay to ensure the data section is rendered
+      setTimeout(() => {
+        onScrollToData()
+      }, 100)
+    }
+  }
+
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert('Geolocation is not supported by this browser.')
@@ -32,7 +74,7 @@ export default function Hero({ location, onLocationChange, onFindWindows, loadin
   }
 
   return (
-    <section className="relative overflow-hidden h-screen flex items-center">
+    <section className="relative overflow-hidden h-screen flex items-center snap-start">
       {/* Video Background */}
       <div className="absolute inset-0 z-0">
         <video
@@ -63,12 +105,41 @@ export default function Hero({ location, onLocationChange, onFindWindows, loadin
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <h1 className="text-4xl md:text-6xl title-font text-white mb-4 drop-shadow-lg">
-          Seas the Day
+          seas the day
         </h1>
         <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow-md">
-          Find your perfect beach window
+          find your perfect beach window
         </p>
         
+        {/* Search input - show when no location and search is active */}
+        {!location && !loading && showSearch && (
+          <div className="max-w-md mx-auto mb-6">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="search for a beach"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && searchBeach(searchQuery)}
+                className="flex-1 px-4 py-3 rounded-full border border-white/30 bg-white/10 backdrop-blur-sm text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+              />
+              <button
+                onClick={() => searchBeach(searchQuery)}
+                disabled={!searchQuery.trim()}
+                className="bg-white/90 text-primary px-4 py-3 rounded-full font-medium hover:bg-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Search className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setShowSearch(false)}
+                className="bg-white/20 text-white border border-white/30 px-4 py-3 rounded-full font-medium hover:bg-white/30 transition-colors duration-200"
+              >
+                cancel
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Action buttons - only show when needed */}
         {(location || loading) && (
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
@@ -80,7 +151,7 @@ export default function Hero({ location, onLocationChange, onFindWindows, loadin
                   disabled={loading}
                 >
                   <MapPin className="h-5 w-5" />
-                  Use My Location
+                  use my location
                 </button>
                 <button
                   onClick={() => onLocationChange({ lat: 34.0195, lon: -118.4912, name: 'Santa Monica' })}
@@ -88,45 +159,47 @@ export default function Hero({ location, onLocationChange, onFindWindows, loadin
                   disabled={loading}
                 >
                   <MapPin className="h-5 w-5" />
-                  Test with Santa Monica
+                  test with santa monica
                 </button>
               </>
             ) : (
               <div className="flex items-center gap-2 text-white/90">
                 <MapPin className="h-5 w-5" />
-                <span>Location detected</span>
+                <span>location detected</span>
               </div>
             )}
             
             <button
-              onClick={onFindWindows}
+              onClick={handleFindWindows}
               disabled={!location || loading}
               className="bg-primary text-white px-6 py-3 rounded-full font-medium hover:bg-primary-hover transition-colors duration-200 hover:-translate-y-[1px] shadow-lg flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Search className="h-5 w-5" />
-              {loading ? 'Finding windows...' : 'Find best windows'}
+              {loading ? 'finding windows...' : 'find best windows'}
             </button>
           </div>
         )}
         
-        {/* Initial call-to-action when no location */}
-        {!location && !loading && (
-          <div className="mt-8">
+        {/* Initial call-to-action when no location and no search */}
+        {!location && !loading && !showSearch && (
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <button
               onClick={getCurrentLocation}
-              className="bg-white/90 text-primary px-8 py-4 rounded-full font-medium hover:bg-white transition-colors duration-200 hover:-translate-y-[1px] shadow-lg flex items-center gap-3 mx-auto"
+              className="bg-white/90 text-primary px-8 py-4 rounded-full font-medium hover:bg-white transition-colors duration-200 hover:-translate-y-[1px] shadow-lg flex items-center gap-3"
             >
               <MapPin className="h-6 w-6" />
-              Get Started
+              use my location
+            </button>
+            <button
+              onClick={() => setShowSearch(true)}
+              className="bg-white/20 text-white border border-white/30 px-8 py-4 rounded-full font-medium hover:bg-white/30 transition-colors duration-200 hover:-translate-y-[1px] backdrop-blur-sm flex items-center gap-3"
+            >
+              <Search className="h-6 w-6" />
+              search for beach
             </button>
           </div>
         )}
         
-        {location && (
-          <p className="text-sm text-white/70 mt-4">
-            Lat: {location.lat.toFixed(4)}, Lon: {location.lon.toFixed(4)}
-          </p>
-        )}
       </div>
     </section>
   )

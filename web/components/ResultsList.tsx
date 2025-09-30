@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import { BeachWindow } from '@/types'
 import { Sun, Wind, Cloud, Thermometer, RefreshCw } from 'lucide-react'
 
@@ -17,7 +18,7 @@ export default function ResultsList({ windows, loading, error, onRetry, location
       hour: 'numeric',
       minute: '2-digit',
       hour12: true,
-    })
+    }).toLowerCase()
   }
 
   const formatDate = (isoString: string) => {
@@ -25,7 +26,7 @@ export default function ResultsList({ windows, loading, error, onRetry, location
       weekday: 'short',
       month: 'short',
       day: 'numeric',
-    })
+    }).toLowerCase()
   }
 
   const getScoreColor = (score: number) => {
@@ -60,12 +61,12 @@ export default function ResultsList({ windows, loading, error, onRetry, location
       <div className="card text-center">
         <div className="text-bad mb-4">
           <Cloud className="h-12 w-12 mx-auto mb-2" />
-          <h3 className="text-lg font-semibold">We couldn&apos;t fetch the forecast</h3>
-          <p className="text-subtext">Check your connection or try again.</p>
+          <h3 className="text-lg font-semibold">we couldn&apos;t fetch the forecast</h3>
+          <p className="text-subtext">check your connection or try again.</p>
         </div>
         <button onClick={onRetry} className="btn-primary flex items-center gap-2 mx-auto">
           <RefreshCw className="h-4 w-4" />
-          Try Again
+          try again
         </button>
       </div>
     )
@@ -76,8 +77,8 @@ export default function ResultsList({ windows, loading, error, onRetry, location
       <div className="card text-center">
         <div className="text-subtext mb-4">
           <Sun className="h-12 w-12 mx-auto mb-2" />
-          <h3 className="text-lg font-semibold">No stellar windows in that range</h3>
-          <p>Here&apos;s the closest match and why.</p>
+          <h3 className="text-lg font-semibold">no stellar windows in that range</h3>
+          <p>here&apos;s the closest match and why.</p>
         </div>
       </div>
     )
@@ -86,17 +87,38 @@ export default function ResultsList({ windows, loading, error, onRetry, location
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-text">Best Beach Windows</h2>
+        <h2 className="text-xl font-semibold text-text">best beach windows</h2>
         {location && (
           <div className="text-sm text-subtext">
-            for {location.name || 'Current Location'}
+            for {location.name || 'current location'}
           </div>
         )}
       </div>
       
-      <div className="space-y-4">
+      <motion.div 
+        className="space-y-4"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
         {windows.map((window, index) => (
-          <div key={index} className="border border-line rounded-2xl p-6 hover:shadow-coastal transition-shadow">
+          <motion.div 
+            key={index} 
+            className="border border-line rounded-2xl p-6 hover:shadow-coastal transition-shadow"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
             <div className="flex items-center gap-3 mb-4">
               <span className="text-2xl">{getWeatherIcon(window.summary.cloudPct, window.summary.tempF)}</span>
               <div>
@@ -112,11 +134,11 @@ export default function ResultsList({ windows, loading, error, onRetry, location
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Thermometer className="h-4 w-4 text-subtext" />
-                <span className="font-medium">{window.summary.tempF}°F</span>
+                <span className="font-medium">{window.summary.tempF}°f</span>
               </div>
               <div className="flex items-center gap-2">
                 <Sun className="h-4 w-4 text-subtext" />
-                <span className="font-medium">UV {window.summary.uv}</span>
+                <span className="font-medium">uv {window.summary.uv}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Wind className="h-4 w-4 text-subtext" />
@@ -128,14 +150,33 @@ export default function ResultsList({ windows, loading, error, onRetry, location
               </div>
             </div>
             
+            {/* Water temperature and wave height for swim/surf modes */}
+            {(window.summary.waterTempF || window.summary.waveHeightFt) && (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mt-3 pt-3 border-t border-line">
+                {window.summary.waterTempF && (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 text-subtext">🌊</div>
+                    <span className="font-medium">{window.summary.waterTempF}°f water</span>
+                  </div>
+                )}
+                {window.summary.waveHeightFt && (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 text-subtext">🏄</div>
+                    <span className="font-medium">{window.summary.waveHeightFt} ft waves</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            
             {window.reasons.length > 2 && (
               <div className="mt-3 text-xs text-subtext">
                 {window.reasons.slice(2).join(' • ')}
               </div>
             )}
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -9,7 +9,7 @@ export default function TestPage() {
   const testAPI = async () => {
     setLoading(true)
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://seastheday-production.up.railway.app'
       const response = await fetch(`${apiUrl}/recommendations`, {
         method: 'POST',
         headers: {

@@ -39,6 +39,8 @@ class ScoringService:
         pref_temp = preferences.get("prefTempF", 75)
         max_wind = preferences.get("maxWindMph", 15)
         uv_good = preferences.get("uvGood", 6)
+        water_temp = preferences.get("waterTempF", 65)  # For swim/surf modes
+        wave_height = preferences.get("waveHeightFt", 2)  # For surf mode
         
         # Generate all possible windows
         window_hours_int = int(window_hours)
@@ -72,13 +74,19 @@ class ScoringService:
                 precip_prob=max_precip,
                 weights=weights,
                 mode=mode,
-                window_data=window_data
+                window_data=window_data,
+                water_temp=water_temp,
+                wave_height=wave_height
             )
             
             # Generate reasons
             reasons = self._generate_reasons(
                 score, avg_cloud, temp_f, pref_temp, avg_uv, wind_mph, max_precip, mode
             )
+            
+            # Calculate estimated water temp and wave height for display
+            estimated_water_temp = max(water_temp, temp_f - 5)  # Water is usually cooler than air
+            estimated_wave_height = max(1, wind_mph / 8)  # Rough wave height estimate
             
             windows.append({
                 "score": score,
@@ -88,7 +96,9 @@ class ScoringService:
                     "tempF": round(temp_f, 1),
                     "uv": round(avg_uv, 1),
                     "windMph": round(wind_mph, 1),
-                    "cloudPct": round(avg_cloud, 1)
+                    "cloudPct": round(avg_cloud, 1),
+                    "waterTempF": round(estimated_water_temp, 1) if mode in ["swim", "surf"] else None,
+                    "waveHeightFt": round(estimated_wave_height, 1) if mode == "surf" else None
                 },
                 "reasons": reasons
             })
@@ -116,7 +126,8 @@ class ScoringService:
     
     def _calculate_score(self, cloud_pct: float, temp_f: float, pref_temp: float, uv: float, 
                         uv_good: float, wind_mph: float, max_wind: float, precip_prob: float,
-                        weights: Dict[str, float], mode: str, window_data: List[Dict[str, Any]]) -> float:
+                        weights: Dict[str, float], mode: str, window_data: List[Dict[str, Any]],
+                        water_temp: float = 65, wave_height: float = 2) -> float:
         """Calculate the score for a window"""
         
         # Base scoring components
@@ -136,15 +147,27 @@ class ScoringService:
         # Mode-specific adjustments
         if mode == "swim":
             # Swimming prefers warmer water and calmer conditions
-            if temp_f >= 75:
+            if temp_f >= water_temp:
                 score += 0.1
             if wind_mph < 8:
                 score += 0.1
+            # Penalize if air temp is too cold for swimming
+            if temp_f < water_temp - 10:
+                score -= 0.2
                 
         elif mode == "surf":
-            # Add swell score (stub for now)
-            swell_score = 0.5  # Neutral for now
-            score += weights.get("swell", 0) * swell_score
+            # Surfing prefers good wave conditions
+            # Estimate wave height from wind (rough approximation)
+            estimated_wave_height = max(1, wind_mph / 8)  # Rough estimate
+            if estimated_wave_height >= wave_height:
+                score += 0.2
+            else:
+                score -= 0.1
+            # Prefer moderate wind for surfing (not too calm, not too strong)
+            if 8 <= wind_mph <= 20:
+                score += 0.1
+            elif wind_mph > 25:
+                score -= 0.2
         
         # Marine layer heuristic
         marine_bonus = self._calculate_marine_layer_bonus(window_data)
