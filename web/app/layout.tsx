@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'Seas the Day - Find your perfect beach window',
   description: 'Find the best 2-4 hour windows to go to the beach based on hourly weather forecasts.',
   icons: {
-    icon: '/icon.png',
+    icon: '/logo.png',
   },
 }
 
